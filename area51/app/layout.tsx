@@ -16,7 +16,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fugazi",
+  title: "area51",
   description: "FHE dark pool DEX on Fhenix",
 };
 

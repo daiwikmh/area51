@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { POOL_ABI } from "@/lib/contracts";
+import { broadcastToAll } from "@/lib/telegram";
 
 export async function POST(request: Request) {
   try {
@@ -22,8 +23,13 @@ export async function POST(request: Request) {
     const signer = new ethers.Wallet(privateKey, provider);
     const pool = new ethers.Contract(poolAddress, POOL_ABI, signer);
 
+    const orderCount = Number(await pool.batchOrderCount(batch));
     const tx = await pool.executeBatch(batch);
     const receipt = await tx.wait();
+
+    await broadcastToAll(
+      `Batch <b>${batch}</b> executed — ${orderCount} orders settled.\nTx: <code>${receipt.hash}</code>`
+    );
 
     return Response.json({ txHash: receipt.hash, batch, status: "executed" });
   } catch (err: unknown) {

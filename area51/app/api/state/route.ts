@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import { POOL_ABI } from "@/lib/contracts";
 import type { DashboardState, LogEntry, KeeperMode } from "@/lib/dashboard";
+import { EMPTY_STATE } from "@/lib/dashboard";
 
 const KEEPER_HEARTBEAT_URL = process.env.KEEPER_HEARTBEAT_URL ?? "";
 const EVENTS_BLOCK_RANGE = 500;
@@ -19,7 +20,7 @@ export async function GET() {
     const poolAddress = process.env.POOL_ADDRESS;
 
     if (!rpcUrl || !poolAddress) {
-      return Response.json({ error: "missing env" }, { status: 500 });
+      return Response.json(EMPTY_STATE);
     }
 
     const provider = new ethers.JsonRpcProvider(rpcUrl);

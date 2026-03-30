@@ -8,23 +8,16 @@ type Props = {
 };
 
 const MODE_DOT: Record<string, string> = {
-  idle: "idle",
-  live: "live",
-  executing: "scanning",
-  alert: "alert",
-};
-
-const MODE_LABEL: Record<string, string> = {
-  idle: "KEEPER OFFLINE",
-  live: `BATCH — LIVE`,
-  executing: `EXECUTING`,
-  alert: "STALE PRICE",
+  idle:      "idle",
+  live:      "scanning",
+  executing: "bridging",
+  alert:     "alert",
 };
 
 export default function Topbar({ state, error }: Props) {
-  const dotClass = MODE_DOT[state.mode] ?? "idle";
-  let label = MODE_LABEL[state.mode] ?? "KEEPER OFFLINE";
+  const dot = MODE_DOT[state.mode] ?? "idle";
 
+  let label = "KEEPER OFFLINE";
   if (state.mode === "live" && state.currentBatch > 0) {
     label = `BATCH ${state.currentBatch} — ${state.blocksLeft} BLOCKS`;
   } else if (state.mode === "executing") {
@@ -35,15 +28,19 @@ export default function Topbar({ state, error }: Props) {
 
   return (
     <div className="topbar">
-      <span className={`status-dot ${dotClass}`} />
-      <span
-        className="text-xs font-mono font-semibold tracking-widest"
-        style={{ color: dotClass === "idle" ? "var(--text-muted)" : "inherit" }}
-      >
-        {label}
-      </span>
+      <div className="status-badge">
+        <div className={`status-dot ${dot}`} />
+        <span
+          className="font-mono"
+          style={{ fontSize: "10px", color: "var(--text-muted)", letterSpacing: "0.08em" }}
+        >
+          {label}
+        </span>
+      </div>
       {error && (
-        <span className="ml-auto text-xs val-danger">ERR: {error}</span>
+        <span className="ml-auto val-danger" style={{ fontSize: "10px" }}>
+          ERR: {error}
+        </span>
       )}
     </div>
   );

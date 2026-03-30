@@ -1,17 +1,18 @@
 import { ethers } from "ethers";
 import { POOL_ABI } from "@/lib/contracts";
+import { notifyWallet } from "@/lib/telegram";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { encAmount, encIsBuy, tokenIn, tokenOut } = body;
+    const { encAmount, encIsBuy, tokenIn, tokenOut, wallet } = body;
 
     if (!encAmount || !encIsBuy) {
       return Response.json({ error: "missing encAmount or encIsBuy" }, { status: 400 });
     }
 
     const rpcUrl = process.env.FHENIX_RPC_URL;
-    const privateKey = process.env.RELAYER_PRIVATE_KEY;
+    const privateKey = process.env.KEEPER_PRIVATE_KEY;
     const poolAddress = process.env.POOL_ADDRESS;
 
     if (!rpcUrl || !privateKey || !poolAddress) {
@@ -24,6 +25,13 @@ export async function POST(request: Request) {
 
     const tx = await pool.submitOrder(encAmount, encIsBuy);
     const receipt = await tx.wait();
+
+    if (wallet) {
+      await notifyWallet(
+        wallet,
+        `Your encrypted order was submitted.\nBatch: <b>${await pool.currentBatch()}</b>\nTx: <code>${receipt.hash}</code>`
+      );
+    }
 
     return Response.json({ txHash: receipt.hash, status: "submitted" });
   } catch (err: unknown) {

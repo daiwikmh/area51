@@ -1,8 +1,8 @@
-# Fugazi — FHE Dark Pool DEX on Fhenix
+# area51 — FHE Dark Pool DEX on Fhenix
 
 ## Context
 
-Build a privacy-preserving AMM-based DEX ("Fugazi") on Fhenix FHE blockchain. Individual order sizes and directions are hidden via fully homomorphic encryption. The system batches trades and injects protocol-owned noise orders so an attacker sees only the aggregate (trader + noise), never individual order data. Pool reserves are also encrypted. No oracle or centralized operator is required for trading — only for price-posting (see keeper below). This is implemented as a Hardhat + Solidity project inside the existing Next.js 16 app at `/home/daiwi/phe/area51/`.
+Build a privacy-preserving AMM-based DEX ("area51") on Fhenix FHE blockchain. Individual order sizes and directions are hidden via fully homomorphic encryption. The system batches trades and injects protocol-owned noise orders so an attacker sees only the aggregate (trader + noise), never individual order data. Pool reserves are also encrypted. No oracle or centralized operator is required for trading — only for price-posting (see keeper below). This is implemented as a Hardhat + Solidity project inside the existing Next.js 16 app at `/home/daiwi/phe/area51/`.
 
 ---
 
@@ -38,16 +38,16 @@ Uses **CoFHE** SDK (not legacy fhenix-contracts):
 ```
 contracts/
 ├── contracts/
-│   ├── FugaziPool.sol
-│   ├── FugaziFactory.sol
-│   ├── FugaziRouter.sol
+│   ├── area51Pool.sol
+│   ├── area51Factory.sol
+│   ├── area51Router.sol
 │   ├── MockERC20.sol
 │   └── interfaces/
-│       ├── IFugaziPool.sol
-│       └── IFugaziRouter.sol
+│       ├── Iarea51Pool.sol
+│       └── Iarea51Router.sol
 ├── scripts/deploy.ts
 ├── test/
-│   ├── FugaziPool.test.ts
+│   ├── area51Pool.test.ts
 │   └── helpers/fhe.ts
 ├── hardhat.config.ts
 ├── package.json
@@ -66,7 +66,7 @@ Key differences from the original plan (which assumed legacy `fhenix-contracts`)
 - Local testing: `cofhe-hardhat-plugin` deploys mock CoFHE contracts on hardhat network
 - `FHE.div(euintN, euintN)` is available in CoFHE (used for price math)
 
-### `FugaziPool.sol` — Core Contract
+### `area51Pool.sol` — Core Contract
 
 **Storage layout:**
 
@@ -112,14 +112,14 @@ _reserve0 = _reserve0 + netBuy - netSell
 _reserve1 = _reserve1 + netSell - netBuy
 ```
 
-### `FugaziFactory.sol`
+### `area51Factory.sol`
 
 ```solidity
 mapping(address => mapping(address => address)) public getPool;
 function createPool(address tokenA, address tokenB, uint32 batchSize) external returns (address);
 ```
 
-### `FugaziRouter.sol`
+### `area51Router.sol`
 
 User-facing entry point. Routes to correct pool by (tokenIn, tokenOut).
 
@@ -210,7 +210,7 @@ user enters amount + minOut
 
 ## Phase 4 — Testing
 
-### Contract Tests (`test/FugaziPool.test.ts`)
+### Contract Tests (`test/area51Pool.test.ts`)
 
 Uses `hardhat-fhenix` local node (Docker-based FHE coprocessor).
 
