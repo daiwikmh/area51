@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import SwapPanel from "../dashboard/components/SwapPanel";
+import SwapPanel from "@/components/dashboard/SwapPanel";
 import type { DashboardState } from "@/lib/dashboard";
 import { EMPTY_STATE } from "@/lib/dashboard";
 

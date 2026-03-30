@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { LandingHeader } from "./(landing)/components/LandingHeader";
-import { ParticleCanvas } from "./(landing)/components/ParticleCanvas";
-import { HowItWorks } from "./(landing)/components/HowItWorks";
-import { PrivacySection } from "./(landing)/components/PrivacySection";
+import { LandingHeader } from "@/components/landing/LandingHeader";
+import { ParticleCanvas } from "@/components/landing/ParticleCanvas";
+import { HowItWorks } from "@/components/landing/HowItWorks";
+import { PrivacySection } from "@/components/landing/PrivacySection";
 
 export default function Home() {
   return (

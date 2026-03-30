@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import LiquidityPanel from "../dashboard/components/LiquidityPanel";
+import LiquidityPanel from "@/components/dashboard/LiquidityPanel";
 import type { DashboardState } from "@/lib/dashboard";
 import { EMPTY_STATE } from "@/lib/dashboard";
 

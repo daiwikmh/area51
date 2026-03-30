@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { ConnectWallet } from "./components/ConnectWallet";
-import { SidebarProfile } from "./components/SidebarProfile";
-import { TelegramConnect } from "./components/TelegramConnect";
+import { ConnectWallet } from "@/components/sidebar/ConnectWallet";
+import { SidebarProfile } from "@/components/sidebar/SidebarProfile";
+import { TelegramConnect } from "@/components/sidebar/TelegramConnect";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
