@@ -59,7 +59,7 @@ export function SidebarProfile() {
         <span style={{ fontSize: "11px", color: "var(--text-primary)", fontFamily: "var(--font-mono)" }}>
           {truncate(address)}
         </span>
-        <span style={{ fontSize: "10px", color: "var(--text-ghost)" }}>Fhenix Nitrogen</span>
+        <span style={{ fontSize: "10px", color: "var(--text-ghost)" }}>Sepolia</span>
       </div>
     </div>
   );

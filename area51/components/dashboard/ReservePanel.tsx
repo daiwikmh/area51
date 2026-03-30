@@ -17,6 +17,8 @@ export default function ReservePanel({ state: _state, onAction }: Props) {
   const [reserve0, setReserve0] = useState<string | null>(null);
   const [reserve1, setReserve1] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [keeperBusy, setKeeperBusy] = useState(false);
+  const [keeperStatus, setKeeperStatus] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
   const impliedPrice = (() => {
@@ -37,6 +39,18 @@ export default function ReservePanel({ state: _state, onAction }: Props) {
       else { setReserve0(data?.reserve0 ?? null); setReserve1(data?.reserve1 ?? null); }
     } catch (e) { setErr(e instanceof Error ? e.message : "error"); }
     finally { setBusy(false); }
+  }
+
+  async function runKeeper() {
+    setKeeperBusy(true); setKeeperStatus(null);
+    try {
+      const res = await fetch("/api/keeper", { method: "POST" });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      const steps: string[] = data.steps ?? [];
+      setKeeperStatus(`batch ${data.batch} — ${steps.join(", ")}`);
+    } catch (e) { setKeeperStatus(e instanceof Error ? e.message : "error"); }
+    finally { setKeeperBusy(false); }
   }
 
   const unsealed = reserve0 !== null && reserve1 !== null;
@@ -64,10 +78,18 @@ export default function ReservePanel({ state: _state, onAction }: Props) {
       </div>
 
       <button className="btn btn-neon w-full" onClick={unseal} disabled={busy}>
-        {busy ? "UNSEALING..." : "UNSEAL"}
+        {busy ? "UNSEALING..." : "UNSEAL RESERVES"}
       </button>
-
       {err && <p className="stat-sub val-danger mt-2">{err}</p>}
+
+      <div style={{ borderTop: "1px solid var(--border)", paddingTop: "12px", marginTop: "12px" }}>
+        <div className="field-label mb-2">Price Keeper</div>
+        <p className="stat-sub mb-3">Posts buy/sell price for current batch. Takes ~30s for CoFHE decrypt.</p>
+        <button className="btn btn-ghost w-full" onClick={runKeeper} disabled={keeperBusy}>
+          {keeperBusy ? "RUNNING..." : "RUN KEEPER"}
+        </button>
+        {keeperStatus && <p className="stat-sub mt-2">{keeperStatus}</p>}
+      </div>
     </div>
   );
 }

@@ -11,7 +11,10 @@ export async function initCofhejs(provider: unknown, signer: unknown) {
     signer: signer as Parameters<typeof cofhejs.initialize>[0]["signer"],
     environment: "TESTNET",
   });
-  if (!result.success) throw new Error("cofhejs init failed: " + result.error?.message);
+  if (!result.success) {
+    initialized = false;
+    throw new Error("cofhejs init failed: " + result.error?.message);
+  }
   initialized = true;
 }
 

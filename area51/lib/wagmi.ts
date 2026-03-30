@@ -2,14 +2,14 @@ import { createConfig, http } from "wagmi";
 import { defineChain } from "viem";
 
 export const fhenixNitrogen = defineChain({
-  id: 8008148,
-  name: "Fhenix Nitrogen",
-  nativeCurrency: { name: "tFHE", symbol: "tFHE", decimals: 18 },
+  id: 11155111,
+  name: "Sepolia",
+  nativeCurrency: { name: "Sepolia ETH", symbol: "ETH", decimals: 18 },
   rpcUrls: {
-    default: { http: ["https://api.nitrogen.fhenix.zone"] },
+    default: { http: ["https://ethereum-sepolia.publicnode.com"] },
   },
   blockExplorers: {
-    default: { name: "Fhenix Explorer", url: "https://explorer.nitrogen.fhenix.zone" },
+    default: { name: "Etherscan", url: "https://sepolia.etherscan.io" },
   },
   testnet: true,
 });

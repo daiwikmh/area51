@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { BrowserProvider, Contract } from "ethers";
 import type { DashboardState } from "@/lib/dashboard";
+import { getProvider } from "@/lib/metamask";
+import { POOL_ABI, POOL_ADDRESS } from "@/lib/contracts";
 
 type Props = {
   state: DashboardState;
@@ -15,7 +18,10 @@ function truncate(addr: string) {
 
 export default function BatchQueuePanel({ state, onAction }: Props) {
   const [busy, setBusy] = useState(false);
+  const [claimBusy, setClaimBusy] = useState(false);
+  const [claimBatch, setClaimBatch] = useState("");
   const [status, setStatus] = useState<string | null>(null);
+  const [claimStatus, setClaimStatus] = useState<string | null>(null);
 
   const progress = state.batchSize > 0
     ? Math.min(100, ((state.batchSize - state.blocksLeft) / state.batchSize) * 100)
@@ -30,6 +36,24 @@ export default function BatchQueuePanel({ state, onAction }: Props) {
       setStatus(`batch ${state.currentBatch} executed`);
     } catch (e) { setStatus(e instanceof Error ? e.message : "error"); }
     finally { setBusy(false); }
+  }
+
+  async function claimOutput() {
+    const batch = parseInt(claimBatch);
+    if (isNaN(batch) || batch < 1) return;
+    setClaimBusy(true); setClaimStatus(null);
+    try {
+      const raw = getProvider();
+      if (!raw) throw new Error("wallet not connected");
+      const provider = new BrowserProvider(raw as ConstructorParameters<typeof BrowserProvider>[0]);
+      const signer = await provider.getSigner();
+      const pool = new Contract(POOL_ADDRESS, POOL_ABI, signer);
+      const tx = await pool.claimOutput(batch);
+      await tx.wait();
+      setClaimStatus(`claimed batch ${batch} — decrypt pending`);
+      setClaimBatch("");
+    } catch (e) { setClaimStatus(e instanceof Error ? e.message : "error"); }
+    finally { setClaimBusy(false); }
   }
 
   return (
@@ -72,7 +96,7 @@ export default function BatchQueuePanel({ state, onAction }: Props) {
         </table>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 mb-4">
         <div className="flex-1">
           <div className="flex justify-between mb-1">
             <span className="stat-sub" style={{ margin: 0 }}>
@@ -89,7 +113,30 @@ export default function BatchQueuePanel({ state, onAction }: Props) {
         </button>
       </div>
 
-      {status && <p className="stat-sub mt-2">{status}</p>}
+      {status && <p className="stat-sub mb-3">{status}</p>}
+
+      <div style={{ borderTop: "1px solid var(--border)", paddingTop: "12px" }}>
+        <div className="field-label mb-2">Claim Output</div>
+        <div className="flex gap-2">
+          <input
+            className="input-field flex-1"
+            type="number"
+            min="1"
+            placeholder="batch #"
+            value={claimBatch}
+            onChange={(e) => setClaimBatch(e.target.value)}
+          />
+          <button
+            className="btn btn-ghost"
+            style={{ whiteSpace: "nowrap", fontSize: "11px" }}
+            onClick={claimOutput}
+            disabled={claimBusy || !claimBatch}
+          >
+            {claimBusy ? "PENDING..." : "CLAIM"}
+          </button>
+        </div>
+        {claimStatus && <p className="stat-sub mt-2">{claimStatus}</p>}
+      </div>
     </div>
   );
 }

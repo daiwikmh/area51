@@ -3,7 +3,7 @@
 import { createEVMClient } from "@metamask/connect-evm";
 import type { EIP1193Provider } from "@metamask/connect-evm";
 
-export const FHENIX_CHAIN_ID = "0x7a31d4"; // 8008148
+export const FHENIX_CHAIN_ID = "0xaa36a7"; // 11155111 Sepolia
 
 export type WalletState = {
   accounts: string[];
@@ -22,7 +22,7 @@ export async function getEVMClient(): Promise<EVMClient> {
     dapp: { name: "area51" },
     api: {
       supportedNetworks: {
-        [FHENIX_CHAIN_ID]: "https://api.nitrogen.fhenix.zone",
+        [FHENIX_CHAIN_ID]: "https://ethereum-sepolia.publicnode.com",
       },
     },
     eventHandlers: {

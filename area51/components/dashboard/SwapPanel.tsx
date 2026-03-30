@@ -39,7 +39,7 @@ export default function SwapPanel({ state, onAction }: Props) {
       if (!rawProvider) throw new Error("wallet not connected");
       const ethersProvider = new BrowserProvider(rawProvider as ConstructorParameters<typeof BrowserProvider>[0]);
       const signer = await ethersProvider.getSigner();
-      await initCofhejs(ethersProvider, signer);
+      await initCofhejs(rawProvider, signer);
 
       const amountWei = BigInt(Math.floor(parseFloat(amount) * 1e18));
       const [encAmount, encIsBuyVal] = await Promise.all([
